@@ -13,3 +13,5 @@ I used Chatgpt as the LLM to prompt for this project. After my first prompt it s
 # Confusion Matrix From Code_1
 
 <img width="898" height="519" alt="Screenshot 2026-04-17 at 11 34 01 PM" src="https://github.com/user-attachments/assets/f99ea685-d2f1-4eac-8ca7-6fedf97812cf" />
+
+The confusion matrix shows how the Random Forest Model uses predictions to classify the beans. Most predictions are along the primary diagonal, which means that the model is fairly accurate. Bombay beans were classified perfectly, while Sira beans were mis-classified the most.
