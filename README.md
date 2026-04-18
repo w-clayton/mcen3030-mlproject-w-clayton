@@ -1,4 +1,3 @@
-<img width="566" height="433" alt="Screenshot 2026-04-17 at 11 54 45 PM" src="https://github.com/user-attachments/assets/1d45b8d6-8a82-4056-9a6f-c64da7b4206f" />
 # mcen3030-mlproject-w-clayton
 
 # Initial Prompt:
