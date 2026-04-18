@@ -1,4 +1,4 @@
-%% Coffee Bean Classification - Tuned Random Forest
+%% Coffee Bean Classification using Tuned Random Forest
 
 clc;
 clear;
@@ -7,7 +7,7 @@ close all;
 %% 1. Load Dataset
 data = readtable('Dry_Bean_Dataset.xlsx');
 
-%% 2. Split Features and Labels
+%% 2. Prepare Features and Labels
 Y = categorical(data.Class);
 X = data(:, setdiff(data.Properties.VariableNames, {'Class'}));
 
@@ -20,24 +20,18 @@ YTrain = Y(training(cv), :);
 XTest = X(test(cv), :);
 YTest = Y(test(cv), :);
 
-%% 4. Hyperparameter Tuning
-
-% Number of trees (more trees = more stable predictions)
-numTrees = 350;
-
-% Number of features per split (sqrt of total features ~ 16 → 4)
-numFeaturesPerSplit = 4;
-
-% Max tree depth control (via MaxNumSplits)
-% Larger value = deeper trees (more complex model)
-maxDepth = 50;
+%% 4. Tuned Random Forest Hyperparameters
+numTrees = 300;              % number of trees
+numFeatures = 4;            % features per split (sqrt of 16)
+maxSplits = 60;             % controls tree depth
+minLeafSize = 5;            % prevents overfitting
 
 %% 5. Train Random Forest Model
 model = TreeBagger(numTrees, XTrain, YTrain, ...
     'Method', 'classification', ...
-    'NumPredictorsToSample', numFeaturesPerSplit, ...
-    'MaxNumSplits', maxDepth, ...
-    'MinLeafSize', 5, ...
+    'NumPredictorsToSample', numFeatures, ...
+    'MaxNumSplits', maxSplits, ...
+    'MinLeafSize', minLeafSize, ...
     'OOBPrediction', 'On', ...
     'OOBPredictorImportance', 'On');
 
@@ -47,7 +41,7 @@ model = TreeBagger(numTrees, XTrain, YTrain, ...
 YPred = categorical(YPredCell);
 YTest = categorical(YTest);
 
-% Ensure consistent category order
+% Ensure category alignment
 classOrder = categories(Y);
 YPred = reordercats(YPred, classOrder);
 YTest = reordercats(YTest, classOrder);
@@ -56,30 +50,39 @@ YTest = reordercats(YTest, classOrder);
 accuracy = mean(YPred == YTest);
 fprintf('Test Accuracy: %.2f%%\n', accuracy * 100);
 
-%% 8. Confusion Matrix
+%% 8. Confusion Matrix (Proper Figure)
 figure('Name','Confusion Matrix','NumberTitle','off');
+
 cm = confusionchart(YTest, YPred);
 cm.Title = 'Coffee Bean Classification - Confusion Matrix';
 cm.RowSummary = 'row-normalized';
 cm.ColumnSummary = 'column-normalized';
 
-%% 9. Feature Importance Plot
-importance = model.OOBPermutedPredictorDeltaError;
-
-figure('Name','Feature Importance','NumberTitle','off');
-bar(importance);
-title('Feature Importance for Coffee Bean Classification');
-ylabel('Importance Score');
-xlabel('Features');
-xticklabels(X.Properties.VariableNames);
-xtickangle(45);
-grid on;
-
-%% 10. Out-of-Bag Error Plot (optional but useful)
+%% 9. Out-of-Bag Error Plot
 figure('Name','OOB Error','NumberTitle','off');
+
 oobErrorValues = oobError(model);
 plot(oobErrorValues, 'LineWidth', 2);
 xlabel('Number of Trees');
 ylabel('Out-of-Bag Error');
-title('OOB Error vs Number of Trees');
+title('Out-of-Bag Error vs Number of Trees');
+grid on;
+
+%% 10. Feature Importance Plot (FULLY LABELED)
+
+importance = model.OOBPermutedPredictorDeltaError;
+featureNames = X.Properties.VariableNames;
+
+figure('Name','Feature Importance','NumberTitle','off');
+
+bar(importance, 'FaceColor', [0.2 0.6 0.8]);
+
+title('Feature Importance for Coffee Bean Classification');
+ylabel('Importance Score');
+xlabel('Features');
+
+% Force correct alignment of bars and labels
+xticks(1:length(featureNames));
+xticklabels(featureNames);
+xtickangle(45);
 grid on;
