@@ -25,9 +25,12 @@ After talking with the LLM, the second iteration of the code has a larger number
 
 # Feature Importance Plot From Code_2
 
-<img width="566" height="433" alt="Screenshot 2026-04-17 at 11 54 45 PM" src="https://github.com/user-attachments/assets/25f337c6-621e-4a3d-87b2-ed62413b7543" />
 
-This plot gives each measured parameter of the beans a rating for how important they are to assign a coff,ee bean to a class. The most important parameters are Roundness, Compactness, and the axis lenghts. While extent is barely considered.
+
+<img width="568" height="433" alt="Screenshot 2026-04-18 at 12 02 58 AM" src="https://github.com/user-attachments/assets/6e7e2fa6-7cdc-4df4-81a7-b6bccbb32a0a" />
+
+
+This plot gives each measured parameter of the beans a rating for how important they are to assign a coff,ee bean to a class. The most important parameters are Roundness, Compactness, Shape Factor 3, and the axis lenghts. While extent is barely considered.
 
 
 
