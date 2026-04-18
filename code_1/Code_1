@@ -1,0 +1,62 @@
+%% Coffee Bean Classification using Random Forest
+
+clc;
+clear;
+close all;
+
+%% 1. Load Data
+data = readtable('Dry_Bean_Dataset.xlsx');
+
+%% 2. Prepare Features and Labels
+Y = categorical(data.Class);
+X = data(:, setdiff(data.Properties.VariableNames, {'Class'}));
+
+%% 3. Train-Test Split (80/20)
+cv = cvpartition(Y, 'HoldOut', 0.2);
+
+XTrain = X(training(cv), :);
+YTrain = Y(training(cv), :);
+
+XTest = X(test(cv), :);
+YTest = Y(test(cv), :);
+
+%% 4. Train Random Forest Model
+numTrees = 150;
+
+model = TreeBagger(numTrees, XTrain, YTrain, ...
+    'Method', 'classification', ...
+    'OOBPrediction', 'On', ...
+    'OOBPredictorImportance', 'On');
+
+%% 5. Predict on Test Data
+[YPredCell, scores] = predict(model, XTest);
+
+% Convert predictions properly to categorical
+YPred = categorical(YPredCell);
+YTest = categorical(YTest);
+
+%% 6. Force categories to match (IMPORTANT for confusionchart)
+classOrder = categories(Y);
+
+YPred = reordercats(YPred, classOrder);
+YTest = reordercats(YTest, classOrder);
+
+%% 7. Confusion Matrix (FORCED FIGURE OUTPUT)
+figure('Name','Confusion Matrix','NumberTitle','off');
+cm = confusionchart(YTest, YPred);
+cm.Title = 'Confusion Matrix - Coffee Bean Classification';
+cm.RowSummary = 'row-normalized';
+cm.ColumnSummary = 'column-normalized';
+
+%% 8. Accuracy
+accuracy = mean(YPred == YTest);
+fprintf('Test Accuracy: %.2f%%\n', accuracy * 100);
+
+%% 9. Out-of-Bag Error Plot
+figure('Name','OOB Error','NumberTitle','off')
+oobErrorValues = oobError(model);
+plot(oobErrorValues, 'LineWidth', 2);
+xlabel('Number of Trees');
+ylabel('Out-of-Bag Error');
+title('OOB Error vs Number of Trees');
+grid on;
