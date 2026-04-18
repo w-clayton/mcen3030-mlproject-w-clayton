@@ -1,0 +1,85 @@
+%% Coffee Bean Classification - Tuned Random Forest
+
+clc;
+clear;
+close all;
+
+%% 1. Load Dataset
+data = readtable('Dry_Bean_Dataset.xlsx');
+
+%% 2. Split Features and Labels
+Y = categorical(data.Class);
+X = data(:, setdiff(data.Properties.VariableNames, {'Class'}));
+
+%% 3. Train-Test Split (80/20)
+cv = cvpartition(Y, 'HoldOut', 0.2);
+
+XTrain = X(training(cv), :);
+YTrain = Y(training(cv), :);
+
+XTest = X(test(cv), :);
+YTest = Y(test(cv), :);
+
+%% 4. Hyperparameter Tuning
+
+% Number of trees (more trees = more stable predictions)
+numTrees = 350;
+
+% Number of features per split (sqrt of total features ~ 16 → 4)
+numFeaturesPerSplit = 4;
+
+% Max tree depth control (via MaxNumSplits)
+% Larger value = deeper trees (more complex model)
+maxDepth = 50;
+
+%% 5. Train Random Forest Model
+model = TreeBagger(numTrees, XTrain, YTrain, ...
+    'Method', 'classification', ...
+    'NumPredictorsToSample', numFeaturesPerSplit, ...
+    'MaxNumSplits', maxDepth, ...
+    'MinLeafSize', 5, ...
+    'OOBPrediction', 'On', ...
+    'OOBPredictorImportance', 'On');
+
+%% 6. Predictions
+[YPredCell, ~] = predict(model, XTest);
+
+YPred = categorical(YPredCell);
+YTest = categorical(YTest);
+
+% Ensure consistent category order
+classOrder = categories(Y);
+YPred = reordercats(YPred, classOrder);
+YTest = reordercats(YTest, classOrder);
+
+%% 7. Accuracy
+accuracy = mean(YPred == YTest);
+fprintf('Test Accuracy: %.2f%%\n', accuracy * 100);
+
+%% 8. Confusion Matrix
+figure('Name','Confusion Matrix','NumberTitle','off');
+cm = confusionchart(YTest, YPred);
+cm.Title = 'Coffee Bean Classification - Confusion Matrix';
+cm.RowSummary = 'row-normalized';
+cm.ColumnSummary = 'column-normalized';
+
+%% 9. Feature Importance Plot
+importance = model.OOBPermutedPredictorDeltaError;
+
+figure('Name','Feature Importance','NumberTitle','off');
+bar(importance);
+title('Feature Importance for Coffee Bean Classification');
+ylabel('Importance Score');
+xlabel('Features');
+xticklabels(X.Properties.VariableNames);
+xtickangle(45);
+grid on;
+
+%% 10. Out-of-Bag Error Plot (optional but useful)
+figure('Name','OOB Error','NumberTitle','off');
+oobErrorValues = oobError(model);
+plot(oobErrorValues, 'LineWidth', 2);
+xlabel('Number of Trees');
+ylabel('Out-of-Bag Error');
+title('OOB Error vs Number of Trees');
+grid on;
