@@ -1,3 +1,4 @@
+<img width="566" height="433" alt="Screenshot 2026-04-17 at 11 54 45 PM" src="https://github.com/user-attachments/assets/1d45b8d6-8a82-4056-9a6f-c64da7b4206f" />
 # mcen3030-mlproject-w-clayton
 
 # Initial Prompt:
@@ -20,6 +21,13 @@ The confusion matrix shows how the Random Forest Model uses predictions to class
 # Code Iteration Prompts
 
 After talking with the LLM, the second iteration of the code has a larger number of trees so the model has more accuracy when assigning a class to a bean. It also increased the number of splits from each tree to make the model recognize more detailed patterns when making a classification, and increased the number of features per split so there is a better chance of finding the optimal classification from each tree in the model.
+
+
+# Feature Importance Plot From Code_2
+
+<img width="566" height="433" alt="Screenshot 2026-04-17 at 11 54 45 PM" src="https://github.com/user-attachments/assets/25f337c6-621e-4a3d-87b2-ed62413b7543" />
+
+This plot gives each measured parameter of the beans a rating for how important they are to assign a coff,ee bean to a class. The most important parameters are Roundness, Compactness, and the axis lenghts. While extent is barely considered.
 
 
 
