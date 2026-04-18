@@ -8,10 +8,20 @@ I would like to do a machine learning project where the goal is to predict wheth
 # LLM Response 1
 
 
-I used Chatgpt as the LLM to prompt for this project. After my first prompt it sugested using a Random Forest model. It suggested this model because it can handle multiple parameters (like the various physical measurements of the beans) well to find a classification for a new input, it doesn't require complicated tuning once it has the reference data, it can determine which parameters are most important for classification, and it has built in validation based on "out-of-bag" error
+I used Chatgpt as the LLM to prompt for this project. After my first prompt it sugested using a Random Forest model. It suggested this model because it can handle multiple parameters (like the various physical measurements of the beans) well to find a classification for a new input, it doesn't require complicated tuning once it has the reference data, it can determine which parameters are most important for classification, and it has built in validation based on "out-of-bag" error.
 
 # Confusion Matrix From Code_1
 
 <img width="898" height="519" alt="Screenshot 2026-04-17 at 11 34 01 PM" src="https://github.com/user-attachments/assets/f99ea685-d2f1-4eac-8ca7-6fedf97812cf" />
 
 The confusion matrix shows how the Random Forest Model uses predictions to classify the beans. Most predictions are along the primary diagonal, which means that the model is fairly accurate. Bombay beans were classified perfectly, while Sira beans were mis-classified the most.
+
+
+# Code Iteration Prompts
+
+After talking with the LLM, the second iteration of the code has a larger number of trees so the model has more accuracy when assigning a class to a bean. It also increased the number of splits from each tree to make the model recognize more detailed patterns when making a classification, and increased the number of features per split so there is a better chance of finding the optimal classification from each tree in the model.
+
+
+
+
+
